@@ -1,0 +1,5 @@
+../Inc/st7789v3.h:106:2:st7789v3::st7789v3()	16	static
+../Inc/st7789v3.h:115:10:void st7789v3::setColumnAddr(uint16_t, uint16_t)	24	static
+../Inc/st7789v3.h:125:10:void st7789v3::setRowAddr(uint16_t, uint16_t)	24	static
+../Src/main.cpp:15:5:int main()	40	static
+../Src/main.cpp:63:6:void init()	8	static

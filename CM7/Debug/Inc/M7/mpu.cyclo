@@ -1,0 +1,16 @@
+../Inc/M7/mpu.cpp:4:6:void mpu_select_region(uint8_t)	1
+../Inc/M7/mpu.cpp:14:6:void mpu_set_region_baseAddr(uint32_t)	1
+../Inc/M7/mpu.cpp:20:6:void mpu_set_region_size(mpu_region_size)	1
+../Inc/M7/mpu.cpp:26:6:void mpu_set_region_mem_type(mpu_memory_type)	1
+../Inc/M7/mpu.cpp:32:6:void mpu_set_region_shareable(bool)	1
+../Inc/M7/mpu.cpp:37:6:void mpu_enable_region()	1
+../Inc/M7/mpu.cpp:41:6:void mpu_disable_region()	1
+../Inc/M7/mpu.cpp:44:6:void mpu_neverExecRegion()	1
+../Inc/M7/mpu.cpp:47:6:void mpu_allowExecRegion()	1
+../Inc/M7/mpu.cpp:50:6:void mpu_set_subregion_field(uint8_t)	1
+../Inc/M7/mpu.cpp:53:6:void mpu_set_AP(mpu_AP)	1
+../Inc/M7/mpu.cpp:58:6:void mpu_configure_region(MPURegionSettings)	3
+../Inc/M7/mpu.cpp:70:6:void mpu_set_controls(MPUSettings_CTRL)	4
+../Inc/M7/mpu.cpp:81:12:MPUSupport mpu_support_info()	1
+../Inc/M7/mpu.cpp:89:6:void mpu_enable()	1
+../Inc/M7/mpu.cpp:92:6:void mpu_disable()	1

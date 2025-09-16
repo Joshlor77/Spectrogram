@@ -1,0 +1,15 @@
+../Inc/Peripherals/hsem.cpp:9:6:bool HSEM_writeLock(HSEM_CoreID, uint8_t, uint8_t)	1
+../Inc/Peripherals/hsem.cpp:20:6:bool HSEM_readLock(HSEM_CoreID, uint8_t)	1
+../Inc/Peripherals/hsem.cpp:28:6:void HSEM_unlock(HSEM_CoreID, uint8_t, uint8_t)	1
+../Inc/Peripherals/hsem.cpp:34:6:void HSEM_enableC1Itr(uint8_t)	1
+../Inc/Peripherals/hsem.cpp:38:6:void HSEM_enableC2Itr(uint8_t)	1
+../Inc/Peripherals/hsem.cpp:42:6:void HSEM_disableC1Itr(uint8_t)	1
+../Inc/Peripherals/hsem.cpp:46:6:void HSEM_disableC2Itr(uint8_t)	1
+../Inc/Peripherals/hsem.cpp:50:6:bool HSEM_readC1Flag(uint8_t)	1
+../Inc/Peripherals/hsem.cpp:54:6:bool HSEM_readC2Flag(uint8_t)	1
+../Inc/Peripherals/hsem.cpp:58:6:bool HSEM_readC1MaskedFlag(uint8_t)	1
+../Inc/Peripherals/hsem.cpp:62:6:bool HSEM_readC2MaskedFlag(uint8_t)	1
+../Inc/Peripherals/hsem.cpp:66:6:void HSEM_clearC1Flag(uint8_t)	1
+../Inc/Peripherals/hsem.cpp:70:6:void HSEM_clearC2Flag(uint8_t)	1
+../Inc/Peripherals/hsem.cpp:75:6:void HSEM_unlockAllSemaphores(HSEM_CoreID, uint16_t)	1
+../Inc/Peripherals/hsem.cpp:79:6:void HSEM_setKey(uint16_t)	1

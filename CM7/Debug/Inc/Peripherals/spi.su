@@ -1,0 +1,14 @@
+../Inc/Peripherals/spi.cpp:5:6:void spi_config(SPI_MasterCFG, SPIStruct*)	8	static
+../Inc/Peripherals/spi.cpp:14:6:void spi_enableItr(SPIStruct*, SPI_Event)	16	static
+../Inc/Peripherals/spi.cpp:22:6:void spi_clearFlag(SPIStruct*, SPI_Event)	16	static
+../Inc/Peripherals/spi.cpp:25:6:bool spi_readFlag(SPIStruct*, SPI_Event)	16	static
+../Inc/Peripherals/spi.cpp:32:6:void spi_iolock(SPIStruct*)	16	static
+../Inc/Peripherals/spi.cpp:37:6:void spi_enable(SPIStruct*)	16	static
+../Inc/Peripherals/spi.cpp:41:6:void spi_disable(SPIStruct*)	16	static
+../Inc/Peripherals/spi.cpp:45:6:void spi_masterStart(SPIStruct*)	16	static
+../Inc/Peripherals/spi.cpp:49:6:void spi_masterSuspend(SPIStruct*)	16	static
+../Inc/Peripherals/spi.cpp:54:6:void spi_setTSize(SPIStruct*, uint16_t)	16	static
+../Inc/Peripherals/spi.cpp:59:6:void spi_setTSER(SPIStruct*, uint16_t)	16	static
+../Inc/Peripherals/spi.cpp:64:6:void spi_transmitData(SPIStruct*, uint32_t)	16	static
+../Inc/Peripherals/spi.cpp:69:6:void spi_halfDuplex_transmitter(SPIStruct*)	16	static
+../Inc/Peripherals/spi.cpp:74:6:void spi_halfDuplex_receiver(SPIStruct*)	16	static
