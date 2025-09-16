@@ -1,5 +1,0 @@
-../Src/adc.cpp:3:6:bool isADCDisabled(volatile ADCStruct*)	8
-../Src/adc.cpp:14:6:void powerOnADC(volatile ADCStruct*)	3
-../Src/adc.cpp:27:6:void enableADC(volatile ADCStruct*)	2
-../Src/adc.cpp:32:6:void setADCRes(volatile ADCStruct*, ADCRes)	1
-../Src/adc.cpp:36:5:int readADC(volatile ADCStruct*)	0

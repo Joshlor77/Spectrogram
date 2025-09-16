@@ -1,6 +1,0 @@
-../Inc/Peripherals/gpio.cpp:4:6:void gpio_setPinMode(GPIOStruct*, GPIO_Pin, GPIO_PinMode)	1
-../Inc/Peripherals/gpio.cpp:11:6:void gpio_setPinOutputType(GPIOStruct*, GPIO_Pin, GPIO_OutputType)	1
-../Inc/Peripherals/gpio.cpp:17:6:void gpio_setPinPull(GPIOStruct*, GPIO_Pin, GPIO_PinPull)	1
-../Inc/Peripherals/gpio.cpp:24:6:void gpio_setPinAltFunc(GPIOStruct*, GPIO_Pin, GPIO_AltFunc)	2
-../Inc/Peripherals/gpio.cpp:37:6:void gpio_setPinOutputSpeed(GPIOStruct*, GPIO_Pin, GPIO_OutputSpeed)	1
-../Inc/Peripherals/gpio.cpp:44:6:void gpio_configPin(GPIOStruct*, GPIO_Pin, GPIO_PinCFG&)	1

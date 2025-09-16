@@ -1,8 +1,0 @@
-../Inc/Peripherals/tim2345.cpp:6:6:void tim_controls(TIMStruct*, TIMSettingsCR)	1
-../Inc/Peripherals/tim2345.cpp:21:6:void tim_prescale(TIMStruct*, uint16_t)	1
-../Inc/Peripherals/tim2345.cpp:24:6:void tim_auto_reload(TIMStruct*, uint32_t)	1
-../Inc/Peripherals/tim2345.cpp:28:6:void tim_enable(TIMStruct*)	1
-../Inc/Peripherals/tim2345.cpp:31:6:void tim_disable(TIMStruct*)	1
-../Inc/Peripherals/tim2345.cpp:35:6:void tim_dma_ir_en(TIMStruct*, TIMSettingsDIER)	1
-../Inc/Peripherals/tim2345.cpp:41:6:bool tim_read_flag(TIMStruct*, tim_flag)	1
-../Inc/Peripherals/tim2345.cpp:44:6:void tim_clear_flag(TIMStruct*, tim_flag)	1
