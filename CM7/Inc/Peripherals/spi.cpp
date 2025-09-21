@@ -19,6 +19,14 @@ void spi_enableItr(SPIStruct* SPIx, SPI_Event event){
 
 	SPIx->IER |= (1<<(uint32_t)event);
 }
+void spi_disableItr(SPIStruct* SPIx, SPI_Event event){
+	if (event == SPI_Event::EOT || event == SPI_Event::SUSP || event == SPI_Event::TXC){
+		SPIx->IER &= ~(1<<(uint32_t)SPI_Event::EOT);
+		return;
+	}
+
+	SPIx->IER &= ~(1<<(uint32_t)event);
+}
 void spi_clearFlag(SPIStruct* SPIx, SPI_Event event){
 	SPIx->IFCR = (1<<(uint32_t)event);
 }

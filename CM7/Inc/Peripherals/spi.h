@@ -129,6 +129,7 @@ struct SPI_MasterCFG{
 void spi_config(SPI_MasterCFG cfg, SPIStruct* SPI);
 
 void spi_enableItr(SPIStruct* SPIx, SPI_Event event);
+void spi_disableItr(SPIStruct* SPIx, SPI_Event event);
 void spi_clearFlag(SPIStruct* SPIx, SPI_Event event);
 bool spi_readFlag(SPIStruct* SPIx, SPI_Event event);
 

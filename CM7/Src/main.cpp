@@ -13,7 +13,17 @@ void init_st7789v3();
 
 int main(void)
 {
-	init_st7789v3();
+	nvic_enableItr(H755_itrPos::spi3);
+
+	display.sendData(buff1, 65535);
+	display.sendData(buff1, 65535);
+	display.sendData(buff1, 65535);
+	display.sendData(buff1, 65535);
+	display.sendData(buff1, 65535);
+	display.sendData(buff1, 65535);
+//	display.sendCommand(st7789v3::commands::COLMOD);
+//	display.sendCommand(st7789v3::commands::CASET);
+//	display.sendCommand(st7789v3::commands::SLPOUT);
 
 	while(true){
 

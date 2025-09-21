@@ -16,7 +16,7 @@ struct NVICStruct {
 
 #define NVIC				(*(NVICStruct *) NVIC_BASE)
 
-enum H755_itrPos : uint8_t {
+enum class H755_itrPos : uint8_t {
 	wwdg1 = 0,				//Use with M7
 	wwdg2 = 0,				//Use with M4
 	pvd_pvm = 1,
@@ -170,36 +170,36 @@ enum H755_itrPos : uint8_t {
 
 //Enables an interrupt
 void inline nvic_enableItr(H755_itrPos itr){
-	NVIC.ISERx[itr / 32] = (1 << (itr%32) );
+	NVIC.ISERx[(uint8_t) itr / 32] = (1 << ((uint8_t) itr%32) );
 }
 
 //Disables an interrupt
 void inline nvic_clearItr(H755_itrPos itr){
-	NVIC.ICERx[itr / 32] = (1 << (itr%32) );
+	NVIC.ICERx[(uint8_t) itr / 32] = (1 << ((uint8_t) itr%32) );
 }
 
 //Forces an interrupt into a pending state
 void inline nvic_setItrPending(H755_itrPos itr){
-	NVIC.ISPRx[itr / 32] = (1 << (itr%32) );
+	NVIC.ISPRx[(uint8_t) itr / 32] = (1 << ((uint8_t) itr%32) );
 }
 
 //Removes an interrupt from a pending state
 void inline nvic_clearItrPending(H755_itrPos itr){
-	NVIC.ICPRx[itr / 32] = (1 << (itr%32) );
+	NVIC.ICPRx[(uint8_t) itr / 32] = (1 << ((uint8_t) itr%32) );
 }
 
 //Returns true if interrupt is active or active and pending
 bool inline nvic_isItrActive(H755_itrPos itr){
-	return NVIC.IABRx[itr / 32] & (itr%32);
+	return NVIC.IABRx[(uint8_t) itr / 32] & ((uint8_t) itr%32);
 }
 
 //Changes the priority of an interrupt
 void inline nvic_setItrPriority(H755_itrPos itr, uint8_t priority){
-	NVIC.IPRx[itr / 4] |= (priority<<( (itr % 4) * 8) );
+	NVIC.IPRx[(uint8_t) itr / 4] |= (priority<<( ((uint8_t) itr % 4) * 8) );
 }
 
 //Generates an interrupt for an interrupt through software.
 //This needs privileged access or USERSETMPEND enabled in CCR.
 void inline nvic_softTrigItr(H755_itrPos itr){
-	NVIC.STIR = itr;
+	NVIC.STIR = (uint8_t) itr;
 }

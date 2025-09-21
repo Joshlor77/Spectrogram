@@ -4,7 +4,6 @@
 #include <spi.h>
 #include <dma.h>
 #include <dmamux.h>
-#include <M7/nvic.h>
 
 #define SCK_PORT		GPIOC
 #define SCK_PIN			GPIO_Pin::P10
@@ -19,10 +18,6 @@
 #define RESET_PIN		GPIO_Pin::P12
 #define BLK_PORT		GPIOC
 #define BLK_PIN			GPIO_Pin::P7
-
-extern "C" void SPI3_IRQHandler(void){
-
-}
 
 void configureGPIO(){
     //PinsControlled by SPI Peripheral
@@ -61,6 +56,7 @@ void configureSPI(){
 	SPIcfg.SSIdleness = 0;
 	SPIcfg.bitsPerDataFrame = 8 - 1;
 	spi_config(SPIcfg, SPI3);
+	spi_enableItr(SPI3, SPI_Event::TXTF);
 }
 
 void configureDMA(){
@@ -157,13 +153,13 @@ void st7789v3::sendCommand(st7789v3::commands command, bool waitForTx){
 
 	disableSPI_DMA();
 
-	DMA1->S0M0AR = (uint32_t) commandBuff;
+	DMA1->S0M0AR = (uint32_t) &commandBuff;
 	dma1_clearAllFlags(DMA_Stream::Stream0);
 	dma1_setDataTransferSize(DMA_Stream::Stream0, 1);
-	dma1_enableStream(DMA_Stream::Stream0);
 	spi_setTSize(SPI3, 1);
 
 	enableSPI_DMA();
+	dma1_enableStream(DMA_Stream::Stream0);
 }
 
 //Can only send up to a maximum value of 65535 data frames per call. Any data chunking should be done by the user.
