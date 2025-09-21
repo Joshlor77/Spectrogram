@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 
+#define SHARED_ARRAY_SIZE		10;
+
 //For SPI 4-wire with DMA and dual buffer
 
 class st7789v3 {

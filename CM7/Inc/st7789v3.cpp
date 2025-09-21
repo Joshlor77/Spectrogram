@@ -4,6 +4,7 @@
 #include <spi.h>
 #include <dma.h>
 #include <dmamux.h>
+#include <M7/nvic.h>
 
 #define SCK_PORT		GPIOC
 #define SCK_PIN			GPIO_Pin::P10
@@ -19,18 +20,11 @@
 #define BLK_PORT		GPIOC
 #define BLK_PIN			GPIO_Pin::P7
 
+extern "C" void SPI3_IRQHandler(void){
 
-//Initializes the peripherals needed for the peripheral.
-void st7789v3::initPeripherals(){
-	//Reset and allocate peripherals used for the display
-	reallocPeripheral(APB1L_Peripheral::spi3);
-	reallocPeripheral(AHB1_Peripheral::dma1);
-	reallocPeripheral(AHB4_Peripheral::gpioa);
-	reallocPeripheral(AHB4_Peripheral::gpiob);
-	reallocPeripheral(AHB4_Peripheral::gpioc);
+}
 
-    //GPIO configurations
-
+void configureGPIO(){
     //PinsControlled by SPI Peripheral
     GPIO_PinCFG pinCfg;
     pinCfg.AF = GPIO_AltFunc::AF6;
@@ -50,8 +44,9 @@ void st7789v3::initPeripherals(){
     gpio_configPin(DC_PORT, DC_PIN, pinCfg);   		//DC
     gpio_configPin(RESET_PORT, RESET_PIN, pinCfg);  //Reset
     gpio_configPin(BLK_PORT, BLK_PIN, pinCfg);    	//BLK  (Back light enable)
+}
 
-    //SPI Configurations
+void configureSPI(){
 	RCC->D2CCIP1R |= (0b100<<12);	//Select Per_CK for SPI123 Ker clock
 	SPI_MasterCFG SPIcfg;
 	SPIcfg.spiMode = SPI_Mode::Mode0;
@@ -66,7 +61,9 @@ void st7789v3::initPeripherals(){
 	SPIcfg.SSIdleness = 0;
 	SPIcfg.bitsPerDataFrame = 8 - 1;
 	spi_config(SPIcfg, SPI3);
+}
 
+void configureDMA(){
 	//DMA configurations
 	DMA_StreamCfg_MemToPer DMAcfg;
 	DMAcfg.stream = DMA_Stream::Stream0;
@@ -85,6 +82,20 @@ void st7789v3::initPeripherals(){
 	DMAcfg.memoryBurst = DMA_BurstType::SingleTransfer;
 	DMAcfg.periphBurst = DMA_BurstType::SingleTransfer;
 	dma_configStream(DMAcfg, DMA1);
+}
+
+//Initializes the peripherals needed for the peripheral.
+void st7789v3::initPeripherals(){
+	//Reset and allocate peripherals used for the display
+	reallocPeripheral(APB1L_Peripheral::spi3);
+	reallocPeripheral(AHB1_Peripheral::dma1);
+	reallocPeripheral(AHB4_Peripheral::gpioa);
+	reallocPeripheral(AHB4_Peripheral::gpiob);
+	reallocPeripheral(AHB4_Peripheral::gpioc);
+
+	configureGPIO();
+	configureSPI();
+	configureDMA();
 
 	//DMAMUX configurations
 	DMAMUX1_ChannelCfg MUXcfg;
@@ -122,6 +133,18 @@ void st7789v3::disableBacklight(){
     gpio_resetPin(BLK_PORT, BLK_PIN);
 }
 
+void inline disableSPI_DMA(){
+	dma1_disableStream(DMA_Stream::Stream0);
+	spi_disable(SPI3);
+	SPI3->CFG1 &= ~(1<<15);	//disable TXDAMEN
+}
+
+void inline enableSPI_DMA(){
+	SPI3->CFG1 |= (1<<15); //enable TXDAMEN
+	spi_enable(SPI3);
+	spi_masterStart(SPI3);
+}
+
 void st7789v3::sendCommand(st7789v3::commands command, bool waitForTx){
 	if (waitForTx){
 		waitTxComplete();
@@ -129,22 +152,18 @@ void st7789v3::sendCommand(st7789v3::commands command, bool waitForTx){
 	resetDCLine();
 	spi_clearFlag(SPI3, SPI_Event::TXTF);
 	spi_clearFlag(SPI3, SPI_Event::EOT);
-	uint32_t dataLength = 1;
-	uint8_t commandBuff[1] = {(uint8_t) command};
 
-	dma1_disableStream(DMA_Stream::Stream0);
-	spi_disable(SPI3);
-	SPI3->CFG1 &= ~(1<<15);
+	uint8_t commandBuff = (uint8_t) command;
+
+	disableSPI_DMA();
 
 	DMA1->S0M0AR = (uint32_t) commandBuff;
-	spi_setTSize(SPI3, dataLength);
 	dma1_clearAllFlags(DMA_Stream::Stream0);
-	dma1_setDataTransferSize(DMA_Stream::Stream0, dataLength);
+	dma1_setDataTransferSize(DMA_Stream::Stream0, 1);
 	dma1_enableStream(DMA_Stream::Stream0);
+	spi_setTSize(SPI3, 1);
 
-	SPI3->CFG1 |= (1<<15);
-	spi_enable(SPI3);
-	spi_masterStart(SPI3);
+	enableSPI_DMA();
 }
 
 //Can only send up to a maximum value of 65535 data frames per call. Any data chunking should be done by the user.
@@ -155,21 +174,16 @@ void st7789v3::sendData(uint8_t* buff, uint32_t dataLength, bool waitForTx){
 	setDCLine();
 	spi_clearFlag(SPI3, SPI_Event::TXTF);
 	spi_clearFlag(SPI3, SPI_Event::EOT);
-	dma1_disableStream(DMA_Stream::Stream0);
-	spi_disable(SPI3);
-	SPI3->CFG1 &= ~(1<<15);
 
-	//Configure DMA
+	disableSPI_DMA();
+
 	DMA1->S0M0AR = (uint32_t) buff;
 	dma1_clearAllFlags(DMA_Stream::Stream0);
 	dma1_setDataTransferSize(DMA_Stream::Stream0, dataLength);
 	dma1_enableStream(DMA_Stream::Stream0);
-
-	//Configure SPI
 	spi_setTSize(SPI3, dataLength);
-	SPI3->CFG1 |= (1<<15);
-	spi_enable(SPI3);
-	spi_masterStart(SPI3);
+
+	enableSPI_DMA();
 }
 
 void st7789v3::waitTxComplete(){
