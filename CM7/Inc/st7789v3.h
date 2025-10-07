@@ -113,6 +113,7 @@ public:
     void sendCommand(st7789v3::commands command, bool waitForTx=true);
     void sendData(uint8_t* buff, uint32_t dataLength, bool waitForTx=true);
     void waitTxComplete();
+    bool ongoingTx();
 
     void setColumnAddr(uint16_t xStart, uint16_t xEnd){
     	sendCommand(st7789v3::commands::CASET);

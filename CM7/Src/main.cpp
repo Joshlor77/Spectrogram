@@ -2,29 +2,37 @@
 #include <st7789v3.h>
 #include <nvic.h>
 
+void init_st7789v3();
+
 const uint32_t chunkSize = 65535;
-const uint32_t buffSize = 240 * 320 * 2;
-uint8_t buff1[buffSize] = {0};
+const uint32_t buffSize = 240 * 320;
+
+const uint32_t chunks = (buffSize + chunkSize - 1) / chunkSize;
+const uint32_t extra = buffSize % chunkSize;
+
+uint8_t buff1[buffSize];
+uint8_t buff2[buffSize];
+uint8_t* currentBuffer = buff1;
 
 st7789v3 display;
 
-void init_st7789v3();
+void swapBuffer(){
+	if (currentBuffer == buff1){
+		currentBuffer = buff2;
+	} else {
+		currentBuffer = buff1;
+	}
+}
 
+void sendCurrentbuffer(){
+	for (uint32_t i = 0; i < chunks - 1; i++){
+		display.sendData(&currentBuffer[chunkSize * i], chunkSize);
+	}
+	display.sendData(&currentBuffer[chunkSize * (chunks-1)], extra);
+}
 
 int main(void)
 {
-	nvic_enableItr(H755_itrPos::spi3);
-
-	display.sendData(buff1, 65535);
-	display.sendData(buff1, 65535);
-	display.sendData(buff1, 65535);
-	display.sendData(buff1, 65535);
-	display.sendData(buff1, 65535);
-	display.sendData(buff1, 65535);
-//	display.sendCommand(st7789v3::commands::COLMOD);
-//	display.sendCommand(st7789v3::commands::CASET);
-//	display.sendCommand(st7789v3::commands::SLPOUT);
-
 	while(true){
 
 	}

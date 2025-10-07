@@ -47,7 +47,7 @@ void configureSPI(){
 	SPIcfg.spiMode = SPI_Mode::Mode0;
 	SPIcfg.ssPol = SPI_SSPolarity::Low;
 	SPIcfg.commMode = SPI_CommMode::Simplex;
-	SPIcfg.masterPresc = SPI_MasterBaudRatePresc::Div128;
+	SPIcfg.masterPresc = SPI_MasterBaudRatePresc::Div16;
 	SPIcfg.enableSSOutput = true;
 	SPIcfg.periphControlsGPIOAltFunc = true;
 	SPIcfg.enableTxDMA = true;
@@ -56,7 +56,6 @@ void configureSPI(){
 	SPIcfg.SSIdleness = 0;
 	SPIcfg.bitsPerDataFrame = 8 - 1;
 	spi_config(SPIcfg, SPI3);
-	spi_enableItr(SPI3, SPI_Event::TXTF);
 }
 
 void configureDMA(){
@@ -156,10 +155,10 @@ void st7789v3::sendCommand(st7789v3::commands command, bool waitForTx){
 	DMA1->S0M0AR = (uint32_t) &commandBuff;
 	dma1_clearAllFlags(DMA_Stream::Stream0);
 	dma1_setDataTransferSize(DMA_Stream::Stream0, 1);
+	dma1_enableStream(DMA_Stream::Stream0);
 	spi_setTSize(SPI3, 1);
 
 	enableSPI_DMA();
-	dma1_enableStream(DMA_Stream::Stream0);
 }
 
 //Can only send up to a maximum value of 65535 data frames per call. Any data chunking should be done by the user.
@@ -185,4 +184,8 @@ void st7789v3::sendData(uint8_t* buff, uint32_t dataLength, bool waitForTx){
 void st7789v3::waitTxComplete(){
 	while (!spi_readFlag(SPI3, SPI_Event::EOT));
 	while (!spi_readFlag(SPI3, SPI_Event::TXTF));
+}
+
+bool st7789v3::ongoingTx(){
+	return !(spi_readFlag(SPI3, SPI_Event::EOT) && spi_readFlag(SPI3, SPI_Event::TXTF));
 }
