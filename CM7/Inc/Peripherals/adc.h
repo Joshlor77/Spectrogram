@@ -56,7 +56,7 @@ struct ADCStruct{
 
 #define ADC1                            ((ADCStruct *)(ADC1_BASE + ADC_MASTER_OFFSET))
 #define ADC2                            ((ADCStruct *)(ADC2_BASE + ADC_SLAVE_OFFSET))
-#define ADC3                            ((ADCStruct *)(ADC1_BASE + ADC_MASTER_OFFSET))
+#define ADC3                            ((ADCStruct *)(ADC3_BASE + ADC_MASTER_OFFSET))
 
 struct ADCCommonStruct{
     volatile uint32_t CSR;

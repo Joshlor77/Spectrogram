@@ -264,7 +264,19 @@ void resetPeripheral(APB1H_Peripheral peripheral);
 void resetPeripheral(APB2_Peripheral peripheral);
 void resetPeripheral(APB4_Peripheral peripheral);
 
-//resets the peripheral then allocates the peripheral
+//Resets the peripheral then allocates the peripheral
+
+void freshAllocPeripheral(AHB3_Peripheral peripheral, SysCPU CPU=SysCPU::CurrentCPU);
+void freshAllocPeripheral(AHB1_Peripheral peripheral, SysCPU CPU=SysCPU::CurrentCPU);
+void freshAllocPeripheral(AHB2_Peripheral peripheral, SysCPU CPU=SysCPU::CurrentCPU);
+void freshAllocPeripheral(AHB4_Peripheral peripheral, SysCPU CPU=SysCPU::CurrentCPU);
+void freshAllocPeripheral(APB3_Peripheral peripheral, SysCPU CPU=SysCPU::CurrentCPU);
+void freshAllocPeripheral(APB1L_Peripheral peripheral, SysCPU CPU=SysCPU::CurrentCPU);
+void freshAllocPeripheral(APB1H_Peripheral peripheral, SysCPU CPU=SysCPU::CurrentCPU);
+void freshAllocPeripheral(APB2_Peripheral peripheral, SysCPU CPU=SysCPU::CurrentCPU);
+void freshAllocPeripheral(APB4_Peripheral peripheral, SysCPU CPU=SysCPU::CurrentCPU);
+
+//If the peripheral has not been allocated to a CPU, then reset it before allocating. Otherwise just allocate the peripheral.
 
 void reallocPeripheral(AHB3_Peripheral peripheral, SysCPU CPU=SysCPU::CurrentCPU);
 void reallocPeripheral(AHB1_Peripheral peripheral, SysCPU CPU=SysCPU::CurrentCPU);

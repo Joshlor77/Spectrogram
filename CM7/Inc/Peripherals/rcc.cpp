@@ -82,8 +82,47 @@ void resetPeripheral(APB4_Peripheral peripheral){
 }
 
 //Both resets and allocates a peripheral from a bus to a particular CPU
-void reallocPeripheral(BUS bus, int peripheral, int CPU){
+void freshAllocPeripheral(BUS bus, int peripheral, int CPU){
 	resetPeripheral(bus, peripheral);
+	allocatePeripheral(bus, peripheral, CPU);
+}
+
+void freshAllocPeripheral(AHB3_Peripheral peripheral, SysCPU CPU){
+	freshAllocPeripheral(AHB3, (int)peripheral, (int)CPU);
+}
+void freshAllocPeripheral(AHB1_Peripheral peripheral, SysCPU CPU){
+	freshAllocPeripheral(AHB1, (int)peripheral, (int)CPU);
+}
+void freshAllocPeripheral(AHB2_Peripheral peripheral, SysCPU CPU){
+	freshAllocPeripheral(AHB2, (int)peripheral, (int)CPU);
+}
+void freshAllocPeripheral(AHB4_Peripheral peripheral, SysCPU CPU){
+	freshAllocPeripheral(AHB4, (int)peripheral, (int)CPU);
+}
+void freshAllocPeripheral(APB3_Peripheral peripheral, SysCPU CPU){
+	freshAllocPeripheral(APB3, (int)peripheral, (int)CPU);
+}
+void freshAllocPeripheral(APB1L_Peripheral peripheral, SysCPU CPU){
+	freshAllocPeripheral(APB1L, (int)peripheral, (int)CPU);
+}
+void freshAllocPeripheral(APB1H_Peripheral peripheral, SysCPU CPU){
+	freshAllocPeripheral(APB1H, (int)peripheral, (int)CPU);
+}
+void freshAllocPeripheral(APB2_Peripheral peripheral, SysCPU CPU){
+	freshAllocPeripheral(APB2, (int)peripheral, (int)CPU);
+}
+void freshAllocPeripheral(APB4_Peripheral peripheral, SysCPU CPU){
+	freshAllocPeripheral(APB4, (int)peripheral, (int)CPU);
+}
+
+bool isAllocated(BUS bus, int peripheral){
+	volatile uint32_t* ENR = &(RCC->AHB3ENR);
+	return (ENR[bus] & (1<<peripheral));
+}
+
+void reallocPeripheral(BUS bus, int peripheral, int CPU){
+	if (!isAllocated(bus, peripheral))
+		resetPeripheral(bus, peripheral);
 	allocatePeripheral(bus, peripheral, CPU);
 }
 
