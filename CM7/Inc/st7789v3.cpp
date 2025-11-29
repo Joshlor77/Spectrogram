@@ -47,7 +47,7 @@ void configureSPI(){
 	SPIcfg.spiMode = SPI_Mode::Mode0;
 	SPIcfg.ssPol = SPI_SSPolarity::Low;
 	SPIcfg.commMode = SPI_CommMode::Simplex;
-	SPIcfg.masterPresc = SPI_MasterBaudRatePresc::Div16;
+	SPIcfg.masterPresc = SPI_MasterBaudRatePresc::Div32;
 	SPIcfg.enableSSOutput = true;
 	SPIcfg.periphControlsGPIOAltFunc = true;
 	SPIcfg.enableTxDMA = true;

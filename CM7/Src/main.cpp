@@ -7,6 +7,7 @@
 #include <gpio.h>
 #include <dma.h>
 #include <dmamux.h>
+
 #include <fft.h>
 
 void init_st7789v3();
@@ -17,60 +18,106 @@ void sendCurrentBuffer();
 
 st7789v3 display;
 
-const uint32_t N = 2048;
-__attribute__((section(".dtcm_ram"))) FFTCalculator<N> fft1024;
-__attribute__((section(".dtcm_ram"))) complex x[N];
-__attribute__((section(".dtcm_ram"))) complex y[N];
+	uint32_t adcBuff[2*100];
+//	reallocPeripheral(APB1L_Peripheral::tim3);
+//	tim_prescale(TIM3, 64); //Timer 3 set to 1MHz
+//	tim_enable(TIM3);
+//	init_ADC();
+//	adc_start(ADC1);
 
-uint32_t addr = (uint32_t) &x;
-
-const uint32_t adcBuffLen = 32;
-uint32_t adcBuff[adcBuffLen];
-
-uint32_t averagetime = 0;
-uint32_t totalTime = 0;
-
-uint32_t averagetimeNew = 0;
-uint32_t totalTimeNew = 0;
-
-void benchmarkMyFFT(){
-	uint32_t iterations = 500;
-	fft1024.fft(x);
-
-	float res[N];
-
-	for (uint32_t i = 0; i < iterations; i++){
-		uint16_t start = TIM3->CNT;
-
-		fft1024.magnitude(x, res);
-
-		uint16_t end = TIM3->CNT;
-		uint16_t diff = end - start;
-		totalTime += diff;
-		averagetime = totalTime / (i+1);
-	}
+//Returns the reverse bit of a number for a certain number of bits
+uint16_t _REV16(uint16_t x){
+	uint16_t res;
+	__asm(
+		"REV16 %[result], %[input_x]"
+		: [result] "=r" (res)
+		: [input_x] "r" (x)
+	);
+	return res;
 }
+
+
+union rgb16 {
+	//This is ordered bgr so that the bytes are sent correctly through SPI. Make sure to reverse the byte order to send correctly.
+	struct rgb565 {
+		uint16_t b : 5;
+		uint16_t g : 6;
+		uint16_t r : 5;
+	} rgb;
+	uint16_t data;
+};
 
 int main(void)
 {
-//	init_st7789v3();
-//	init_ADC();
-//	adc_start(ADC1);
-	reallocPeripheral(APB1L_Peripheral::tim3);
-	tim_prescale(TIM3, 64); //Timer 3 set to 1MHz
-	tim_enable(TIM3);
+	const int N = 16;
+	const int L = 8;
+	const int O = 4;
 
-	for(uint32_t i = 0; i < N; i++){
-		x[i].real = i / 10.0;
-		x[i].imag = 0.0;
-		y[i].real = i * 0.01;
-		y[i].imag = 0.0;
+    complex x[N] = {
+        1,0,
+        2,0,
+        1,0,
+        2,0,
+        3,0,
+        2,0,
+        1,0,
+        2,0,
+        1,0,
+        0,0,
+        1,0,
+        2,0,
+        3,0,
+        1,0,
+        2,0,
+        3,0
+    };
+
+    float w[L];
+    int H = L - O;
+    int frames = 1 + (N-L) / (L-O);
+
+    complex v[L] = {0};
+    hanning(L,w);
+    float X[frames][N/2 + 1] = {0};
+
+    for (int f = 0; f < frames; f++){
+        for (int m = 0; m < L; m++){
+            v[m].real = w[m] * x[m + f*H].real;
+        }
+        fft<L>(v);
+        reversePermute(v, L, log2floor(L));
+        magnitude(v, X[f], L);
+    }
+
+	init_st7789v3();
+
+	rgb16 color = {0};
+	display.setColumnAddr(0, display.MAX_COLS - 1);
+	display.setRowAddr(0, display.MAX_ROWS - 1);
+
+	display.sendCommand(st7789v3::commands::RAMWR);
+	for (uint32_t i = 0; i < display.MAX_COLS*display.MAX_ROWS; i++){
+		display.sendData((uint8_t*) &color.data, 2);
 	}
 
-	benchmarkMyFFT();
+	display.setColumnAddr(display.MAX_COLS/4, 3*display.MAX_COLS/4 - 1);
+	display.setRowAddr(display.MAX_ROWS/4, 3*display.MAX_ROWS/4 - 1);
+	display.sendCommand(st7789v3::commands::RAMWR);
+
 
 	while(true){
-
+		color.rgb.g = 0;
+		color.rgb.r = 0;
+		color.rgb.b = 0;
+		for (int i = 0; i < 32; i++){
+			for (int i = 0 ; i < 600; i++){
+				uint16_t data = _REV16(color.data);
+				display.sendData((uint8_t*) &data, 2);
+			}
+			color.rgb.g =  16*(0.5 - 0.5*cosf((2*MATH_PI*(i))/(32-1)));
+			color.rgb.r = 28*(0.5 - 0.5*cosf((2*MATH_PI*(i+32))/(128-1)));
+			color.rgb.b = 24*(0.5 - 0.5*cosf((2*MATH_PI*(i+16))/(64-1)));
+		}
 	}
 }
 
@@ -83,7 +130,7 @@ void init_st7789v3(){
 	display.sendCommand(st7789v3::commands::DISPON);
 	display.sendCommand(st7789v3::commands::INVON);
 	display.sendCommand(st7789v3::commands::COLMOD);
-	uint8_t colmod = 0b01010101;
+	uint8_t colmod = 0x55;
 	display.sendData(&colmod, 1);
 	display.sendCommand(st7789v3::commands::MADCTL);
 	uint8_t madctl = 0b000000000;

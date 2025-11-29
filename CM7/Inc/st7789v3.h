@@ -14,6 +14,9 @@ private:
 	void resetRstPin();
 	void initPeripherals();
 public:
+	static const uint32_t MAX_ROWS = 320;
+	static const uint32_t MAX_COLS = 240;
+
 	enum class commands {
 		//System Function Control Table 1
 		NOP = 		0x00,		//NO OP
